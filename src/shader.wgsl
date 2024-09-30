@@ -1,16 +1,8 @@
 // Vertex shader
 
-struct Point {
-  position: vec2<f32>, // normalized from -1 to 1
-  color: vec4<f32>
-};
-
 struct Uniforms {
   cameraMatrix: mat4x4<f32>,
   gridSize: u32,
-  pointCount: u32,
-  sine_seeds: vec4<f32>,
-  points: array<Point, 10>
 };
 
 @group(0) @binding(0)
@@ -74,7 +66,7 @@ fn vs_main(
     let scale = 1.8;
     // out.world_pos = vec4<f32>(position.x * scale*0.5, position.y * scale*0.5,  0, 1.) ;
 
-    out.world_pos = myUniforms.cameraMatrix * vec4<f32>(position.x * scale, position.y * scale,  get_sine_wave(position.x, position.y, myUniforms.sine_seeds, 0.1)*0.3*scale, 1.) ;
+    out.world_pos = myUniforms.cameraMatrix * vec4<f32>(position.x * scale, position.y * scale,  1*0.3*scale, 1.) ;
     return out;
 }
 
@@ -134,14 +126,7 @@ fn hsv2rgba(input_hsv: vec4<f32>) -> vec4<f32> {
 @fragment
 fn fs_main(in: VertexOutput) -> @location(0) vec4<f32> {
     // write a loop over the points, computing blended average of color
-    var avg = vec4<f32>(0., 0., 0., 0.);
-    var weightSum = 0.0;
-    for (var i = 0u; i < myUniforms.pointCount; i = i + 1u) {
-        let point = myUniforms.points[i];
-        let dist = distance(point.position.xy, in.position.xy);
-        let weight = pow(10., -dist);
-        weightSum += weight;
-        avg = avg + rgba2hsv(point.color) * weight;
-    }
-    return vec4<f32>(hsv2rgba(avg/weightSum));
+    var avg = vec4<f32>(0., 0., 1., 1.);
+  
+    return vec4<f32>(avg);
 }
